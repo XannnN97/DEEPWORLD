@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEEPWORLD — Media Converter</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<nav class="navbar navbar-dark bg-dark">
+  <div class="container">
+    <span class="navbar-brand mb-0 h1">DEEPWORLD</span>
+    <span class="navbar-text text-light small">影视中间文件转换工具</span>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <!-- Upload -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">上传文件</h5>
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-icon">📁</div>
+        <p class="upload-text">拖放文件到此处，或点击选择</p>
+        <p class="text-muted small">支持 .edl .srt .fcpxml .xml (DaVinci Resolve)</p>
+        <input type="file" id="fileInput" accept=".edl,.srt,.fcpxml,.xml" class="d-none">
+      </div>
+      <div id="uploadStatus" class="mt-2"></div>
+    </div>
+  </div>
+
+  <!-- Preview -->
+  <div id="previewSection" class="d-none">
+    <div class="card mb-4">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h5 class="card-title">解析结果</h5>
+            <p id="fileInfo" class="mb-0 text-muted small"></p>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-success btn-sm" onclick="downloadFile('docx', this)">📄 Word</button>
+            <button class="btn btn-primary btn-sm" onclick="downloadFile('xlsx', this)">📊 Excel</button>
+            <button class="btn btn-secondary btn-sm" onclick="downloadFile('csv', this)">📋 CSV</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="timelineTabs" class="mb-3">
+      <ul class="nav nav-tabs" id="tabList"></ul>
+    </div>
+    <div id="timelineContent"></div>
+  </div>
+
+  <!-- Error -->
+  <div id="errorSection" class="d-none">
+    <div class="alert alert-danger" id="errorMessage"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

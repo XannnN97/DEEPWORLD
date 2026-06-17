@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xmeml>
+
+<xmeml version="5">
+  <project>
+    <name>DaVinci Resolve Test Project</name>
+  </project>
+  <sequence id="seq1">
+    <name>Main Timeline</name>
+    <timecode>
+      <rate>
+        <timebase>24</timebase>
+        <ntsc>FALSE</ntsc>
+      </rate>
+      <string>01:00:00:00</string>
+      <frame>0</frame>
+      <displayformat>NDF</displayformat>
+    </timecode>
+    <media>
+      <video>
+        <track>
+          <tracknumber>1</tracknumber>
+          <clipitem id="clip1">
+            <name>Opening Shot</name>
+            <duration>72</duration>
+            <rate>
+              <timebase>24</timebase>
+              <ntsc>FALSE</ntsc>
+            </rate>
+            <start>0</start>
+            <end>72</end>
+            <recordin>0</recordin>
+            <recordout>72</recordout>
+          </clipitem>
+          <clipitem id="clip2">
+            <name>Interview Scene</name>
+            <duration>120</duration>
+            <rate>
+              <timebase>24</timebase>
+              <ntsc>FALSE</ntsc>
+            </rate>
+            <start>100</start>
+            <end>220</end>
+            <recordin>72</recordin>
+            <recordout>192</recordout>
+          </clipitem>
+        </track>
+      </video>
+      <audio>
+        <track>
+          <tracknumber>1</tracknumber>
+          <clipitem id="clip3">
+            <name>Ambient Sound</name>
+            <duration>192</duration>
+            <rate>
+              <timebase>48000</timebase>
+              <ntsc>FALSE</ntsc>
+            </rate>
+            <start>0</start>
+            <end>192</end>
+            <recordin>0</recordin>
+            <recordout>192</recordout>
+          </clipitem>
+        </track>
+      </audio>
+    </media>
+  </sequence>
+</xmeml>
