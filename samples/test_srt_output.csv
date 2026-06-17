@@ -1,7 +1,0 @@
-﻿Timeline,Track,Track Type,#,Clip Name,Source File,Source In,Source Out,Record In,Record Out,Duration,Speed %,Transition,Transition Duration
-Subtitles,Subtitle 1,subtitle,1,"Hello, welcome to this video.",,00:00:01:00,00:00:05:00,00:00:01:00,00:00:05:00,00:00:04:00,100.0,Cut,
-Subtitles,Subtitle 1,subtitle,2,Today we're going to explore the world of film editing.,,00:00:06:12,00:00:12:00,00:00:06:12,00:00:12:00,00:00:05:13,100.0,Cut,
-Subtitles,Subtitle 1,subtitle,3,This is a subtitle test sample for the DEEPWORLD converter.,,00:00:13:00,00:00:18:12,00:00:13:00,00:00:18:12,00:00:05:12,100.0,Cut,
-Subtitles,Subtitle 1,subtitle,4,"It contains multiple lines with
-line breaks in the subtitle text.",,00:00:20:00,00:00:25:00,00:00:20:00,00:00:25:00,00:00:05:00,100.0,Cut,
-Subtitles,Subtitle 1,subtitle,5,最后一句话是中文。,,00:00:27:00,00:00:30:00,00:00:27:00,00:00:30:00,00:00:03:00,100.0,Cut,
