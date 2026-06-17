@@ -76,6 +76,8 @@ class EDLParser(BaseParser):
         current_event: Optional[dict] = None
         clip_name_map: dict[int, str] = {}  # event_num -> clip_name
         source_file_map: dict[int, str] = {}
+        transition_frames_map: dict[int, int] = {}
+        speed_map: dict[int, float] = {}
 
         for line in lines:
             line = line.rstrip("\n\r")
@@ -86,8 +88,8 @@ class EDLParser(BaseParser):
                 continue
             if line.upper().startswith("FCM:"):
                 fcm = line.split(":", 1)[1].strip().upper()
-                metadata.drop_frame = "DROP" in fcm
-                timeline.drop_frame = "DROP" in fcm
+                metadata.drop_frame = "DROP" in fcm and "NON" not in fcm
+                timeline.drop_frame = "DROP" in fcm and "NON" not in fcm
                 continue
 
             # Event line
@@ -141,11 +143,13 @@ class EDLParser(BaseParser):
             m_sp = _RE_SPEED.match(line)
             if m_sp and current_event is not None:
                 current_event["speed"] = float(m_sp[1])
+                speed_map[current_event["event_num"]] = float(m_sp[1])
                 continue
 
             m_td = _RE_TRANS_DUR.match(line)
             if m_td and current_event is not None:
                 current_event["transition_frames"] = int(m_td[1])
+                transition_frames_map[current_event["event_num"]] = int(m_td[1])
                 continue
 
         # Build clips from collected events
@@ -172,19 +176,10 @@ class EDLParser(BaseParser):
             drop = metadata.drop_frame
             fr = self.default_framerate
 
-            # Check if this is a transition (dissolve/wipe) — two lines with same event number
+            # Check if this is a transition (dissolve/wipe)
             is_transition = edit_raw in ("D", "W", "K")
-            transition_frames = None
-            speed = 100.0
-
-            # Look for transition duration comment
-            if is_transition:
-                for line in lines:
-                    if _RE_TRANS_DUR.match(line):
-                        transition_frames = int(_RE_TRANS_DUR.match(line)[1])
-
-            # Look for speed comments for this event
-            speed_val = self._find_speed_for_event(events, event_num, lines)
+            transition_frames = transition_frames_map.get(event_num)
+            speed_val = speed_map.get(event_num)
 
             transition = None
             if is_transition:

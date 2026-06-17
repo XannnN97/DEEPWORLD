@@ -68,22 +68,17 @@ function renderTimelines(project) {
   content.innerHTML = '';
 
   project.timelines.forEach((tl, ti) => {
-    // Tab
+    // Tab — use Bootstrap 5's own tab API instead of custom click handlers
     const li = document.createElement('li');
     li.className = 'nav-item';
-    li.innerHTML = `<button class="nav-link ${ti === 0 ? 'active' : ''}" data-bs-toggle="tab" data-target="tl-${ti}">${tl.name}</button>`;
+    li.innerHTML = `<button class="nav-link ${ti === 0 ? 'active' : ''}" data-bs-toggle="tab" data-bs-target="#tl-${ti}" type="button" role="tab">${tl.name}</button>`;
     tabList.appendChild(li);
-    li.querySelector('button').addEventListener('click', () => {
-      tabList.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
-      li.querySelector('button').classList.add('active');
-      content.querySelectorAll('.tl-content').forEach(d => d.classList.add('d-none'));
-      document.getElementById(`tl-content-${ti}`).classList.remove('d-none');
-    });
 
-    // Content
+    // Content pane
     const div = document.createElement('div');
-    div.id = `tl-content-${ti}`;
-    div.className = `tl-content ${ti === 0 ? '' : 'd-none'}`;
+    div.className = `tab-pane tl-content ${ti === 0 ? 'show active' : ''}`;
+    div.id = `tl-${ti}`;
+    div.setAttribute('role', 'tabpanel');
     div.innerHTML = `<p class="text-muted small">${tl.tracks.length} 条轨道</p>`;
 
     tl.tracks.forEach((tr) => {
@@ -133,14 +128,13 @@ function renderTimelines(project) {
 }
 
 /* ── Download ── */
-async function downloadFile(format) {
+async function downloadFile(format, btn) {
   if (!currentFile) return;
 
   const fd = new FormData();
   fd.append('file', currentFile);
   fd.append('output_format', format);
 
-  const btn = event.target;
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> 导出中...';
 
