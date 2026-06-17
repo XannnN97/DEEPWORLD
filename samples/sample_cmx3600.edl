@@ -1,0 +1,24 @@
+TITLE: Sample EDL for Testing
+FCM: NON-DROP FRAME
+
+001  AX       V     C        01:00:00:00 01:00:05:00 01:00:00:00 01:00:05:00
+* FROM CLIP NAME: Sunflower_Intro.mov
+* SOURCE FILE: /Volumes/Media/Sunflower_Intro.mov
+
+002  BL       V     C        01:00:00:00 01:00:02:00 01:00:05:00 01:00:07:00
+
+003  00B1     AA    C        01:00:00:00 01:00:03:12 01:00:00:00 01:00:03:12
+* FROM CLIP NAME: Ambient_Street.wav
+* SOURCE FILE: /Volumes/Audio/Ambient_Street.wav
+
+004  00B2     AA    D        01:00:00:00 01:00:04:00 01:00:03:12 01:00:07:12
+* FROM CLIP NAME: Traffic_Noise.wav
+* TRANSITION DURATION: 12
+
+005  RED      V     C        01:00:10:00 01:00:15:00 01:00:07:00 01:00:12:00
+* FROM CLIP NAME: City_Panorama.mov
+* SOURCE FILE: /Volumes/Media/City_Panorama.mov
+
+006  CAM_A    V     D        01:00:20:00 01:00:25:00 01:00:12:00 01:00:17:00
+* FROM CLIP NAME: Interview_Clip.mov
+* TRANSITION DURATION: 8

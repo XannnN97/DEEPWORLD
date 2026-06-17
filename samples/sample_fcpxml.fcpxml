@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE fcpxml>
+
+<fcpxml version="1.10" name="Sample Project">
+  <resources>
+    <format id="r1" name="FFVideoFormat1080p2398" frameDuration="1001/24000s" width="1920" height="1080"/>
+    <asset id="r2" name="Sunrise.mov" src="file:///Volumes/Media/Sunrise.mov" start="0s" duration="6000/24s" format="r1"/>
+    <asset id="r3" name="Interview.mov" src="file:///Volumes/Media/Interview.mov" start="0s" duration="12000/24s" format="r1"/>
+  </resources>
+  <library>
+    <event name="Test Event">
+      <project name="Sample Timeline">
+        <sequence duration="7200/24s" format="r1">
+          <spine>
+            <clip name="Sunrise" ref="r2" offset="0s" duration="3600/24s" start="0s">
+              <marker start="1200/24s" value="Golden Hour"/>
+            </clip>
+            <clip name="Interview" ref="r3" offset="3600/24s" duration="3600/24s" start="6000/24s">
+              <marker start="120/24s" value="Key Question"/>
+            </clip>
+          </spine>
+        </sequence>
+      </project>
+    </event>
+  </library>
+</fcpxml>

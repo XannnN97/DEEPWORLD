@@ -1,0 +1,82 @@
+:root {
+  --accent: #1a5276;
+}
+
+body {
+  background: #f5f6f8;
+  font-family: -apple-system, BlinkMacSystemFont, "Microsoft YaHei", sans-serif;
+}
+
+.upload-zone {
+  border: 2px dashed #ccc;
+  border-radius: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: #fafbfc;
+}
+
+.upload-zone:hover,
+.upload-zone.dragover {
+  border-color: var(--accent);
+  background: #e8f0fe;
+}
+
+.upload-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.upload-text {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.card {
+  border: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.04);
+  border-radius: 12px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.table-wrap table {
+  font-size: 13px;
+  margin-bottom: 0;
+}
+
+.table-wrap thead th {
+  background: var(--accent);
+  color: white;
+  position: sticky;
+  top: 0;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.track-header {
+  background: #e8f0fe;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #ccc;
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

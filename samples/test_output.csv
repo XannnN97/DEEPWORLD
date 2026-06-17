@@ -1,0 +1,7 @@
+﻿Timeline,Track,Track Type,#,Clip Name,Source File,Source In,Source Out,Record In,Record Out,Duration,Speed %,Transition,Transition Duration
+Timeline 1,V,video,1,Sunflower_Intro.mov,,00:00:00;00,00:00:00;00,00:00:00;00,00:00:00;00,00:00:00;00,100.0,Cut,
+Timeline 1,V,video,2,[BL],,00:00:00;00,00:00:00;00,00:00:00;00,00:00:00;00,00:00:00;00,100.0,Cut,
+Timeline 1,V,video,3,City_Panorama.mov,/Volumes/Media/City_Panorama.mov,00:00:00;00,00:00:00;00,00:00:00;00,00:00:00;00,00:00:00;00,100.0,Cut,
+Timeline 1,V,video,4,Interview_Clip.mov,,00:00:00;00,00:00:00;00,00:00:00;00,00:00:00;00,00:00:00;00,100.0,dissolve,00:00:00;08
+Timeline 1,AA,audio,1,Ambient_Street.wav,/Volumes/Audio/Ambient_Street.wav,00:00:00;00,00:00:00;00,00:00:00;00,00:00:00;00,00:00:00;00,100.0,Cut,
+Timeline 1,AA,audio,2,Traffic_Noise.wav,,00:00:00;00,00:00:00;00,00:00:00;00,00:00:00;00,00:00:00;00,100.0,dissolve,00:00:00;08
