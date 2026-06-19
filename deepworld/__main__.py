@@ -19,7 +19,7 @@ def main():
         help="Output format (overrides extension detection)",
     )
     parser.add_argument("--web", action="store_true", help="Start web UI server")
-    parser.add_argument("--port", type=int, default=8080, help="Web server port")
+    parser.add_argument("--port", type=int, default=8090, help="Web server port")
     parser.add_argument("--verbose", "-v", action="store_true")
     parser.add_argument("--list-formats", action="store_true", help="List supported formats")
 
