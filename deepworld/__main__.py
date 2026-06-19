@@ -20,6 +20,8 @@ def main():
     )
     parser.add_argument("--web", action="store_true", help="Start web UI server")
     parser.add_argument("--port", type=int, default=8090, help="Web server port")
+    parser.add_argument("--framerate", type=float, default=24.0, help="Framerate for EDL files (default: 24)")
+    parser.add_argument("--output-dir", type=str, help="Output directory for Web UI exports (default: system temp)")
     parser.add_argument("--verbose", "-v", action="store_true")
     parser.add_argument("--list-formats", action="store_true", help="List supported formats")
 
@@ -38,7 +40,7 @@ def main():
 
     if args.web:
         from .web.server import start_server
-        start_server(host="127.0.0.1", port=args.port)
+        start_server(host="127.0.0.1", port=args.port, output_dir=args.output_dir)
         return
 
     if not args.input:
@@ -52,7 +54,8 @@ def main():
         input_path = Path(args.input)
         output = str(input_path.parent / f"{input_path.stem}_report.{args.format}")
 
-    ConvertPipeline.convert(Path(args.input), output, verbose=args.verbose)
+    from fractions import Fraction
+    ConvertPipeline.convert(Path(args.input), output, verbose=args.verbose, framerate=Fraction(int(args.framerate * 1000), 1000))
 
 
 if __name__ == "__main__":

@@ -51,15 +51,6 @@ class SRTParser(BaseParser):
         track = UnifiedTrack(name="Subtitle 1", track_type=TrackType.SUBTITLE, index=1)
 
         matches = _RE_BLOCK.findall(text)
-        if not matches:
-            # Fallback for different line ending patterns
-            _RE_BLOCK_FALLBACK = re.compile(
-                r"(\d+)\s*[\r\n]+"
-                r"(\d{2}:\d{2}:\d{2}[,.]\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2}[,.]\d{3})\s*[\r\n]+"
-                r"((?:.+[\r\n]*)*?)(?:[\r\n]{2,}|[\r\n]*$)",
-                re.MULTILINE,
-            )
-            matches = _RE_BLOCK_FALLBACK.findall(text)
 
         for seq, start_str, end_str, text_content in matches:
             text_clean = text_content.strip().replace("\r\n", "\n")

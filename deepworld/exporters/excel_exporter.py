@@ -85,10 +85,11 @@ class ExcelExporter(BaseExporter):
                 # Add blank row between tracks
                 row_num += 1
 
-            # Column widths
+            # Column widths — use openpyxl's get_column_letter for safety
+            from openpyxl.utils import get_column_letter
             widths = [16, 12, 6, 22, 36, 12, 12, 12, 12, 12, 10, 12, 18]
             for col, w in enumerate(widths, 1):
-                ws.column_dimensions[chr(64 + col) if col <= 26 else f"A{col}"].width = w
+                ws.column_dimensions[get_column_letter(col)].width = w
 
         # Remove default sheet if multiple created
         if len(wb.sheetnames) > len(project.timelines):

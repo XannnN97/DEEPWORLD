@@ -114,3 +114,26 @@ class TestTimecodeFormatting:
     def test_to_seconds_string(self):
         tc = Timecode.from_smpte(0, 0, 5, 0, Fraction(24, 1))
         assert float(tc.to_seconds_string()) == pytest.approx(5.0, abs=0.1)
+
+
+class TestDropFrame:
+    def test_drop_frame_separator(self):
+        """29.97fps drop-frame should use ';' as separator."""
+        tc = Timecode.from_smpte(0, 1, 0, 0, Fraction(30000, 1001), drop_frame=True)
+        s = tc.to_smpte_string()
+        assert ";" in s, f"Drop-frame should use ';', got: {s}"
+
+    def test_drop_frame_5994(self):
+        """59.94fps drop-frame compensation."""
+        tc = Timecode.from_smpte(0, 1, 0, 0, Fraction(60000, 1001), drop_frame=True)
+        tc2 = Timecode.from_smpte(0, 1, 0, 0, Fraction(60000, 1001), drop_frame=False)
+        assert tc.total_frames != tc2.total_frames
+
+    def test_negative_frames(self):
+        """Negative frame count should be representable (from __sub__)."""
+        a = Timecode(100, Fraction(24, 1))
+        b = Timecode(200, Fraction(24, 1))
+        diff = a - b
+        assert diff.total_frames == -100
+        # Should not crash on SMPTE string (will produce zero but not error)
+        _ = diff.to_smpte_string()

@@ -225,39 +225,6 @@ class EDLParser(BaseParser):
         project = UnifiedProject(metadata=metadata, timelines=[timeline])
         return project
 
-    def _find_speed_for_event(self, events, event_num, lines) -> Optional[float]:
-        """Find M2 lines for this event to determine speed."""
-        for line in lines:
-            m2 = _RE_M2.match(line)
-            if m2:
-                # M2 lines come after the main event line for the same event
-                pass
-        # Look for SPEED comments after this event's lines
-        found = False
-        for line in lines:
-            if _RE_EVENT.match(line) and int(_RE_EVENT.match(line)[1]) != event_num:
-                if found:
-                    break
-                continue
-            if _RE_EVENT.match(line) and int(_RE_EVENT.match(line)[1]) == event_num:
-                found = True
-                continue
-            if found:
-                m_sp = _RE_SPEED.match(line)
-                if m_sp:
-                    return float(m_sp[1])
-
-        # Also search M2 lines
-        for line in lines:
-            m2 = _RE_M2.match(line)
-            if m2:
-                try:
-                    sp = float(line.split("*")[-1].split(":")[-1].strip()) if "*" in line else 100.0
-                    return sp
-                except (ValueError, IndexError):
-                    pass
-        return None
-
 
 # Register parser
 from .base import ParserRegistry
