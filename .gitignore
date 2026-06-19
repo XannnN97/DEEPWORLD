@@ -1,7 +1,8 @@
-__pycache__/
 *.pyc
+__pycache__/
 .pytest_cache/
 *.egg-info/
 dist/
 build/
 samples/test_*
+Timeline-test-*
