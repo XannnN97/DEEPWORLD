@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from fractions import Fraction
 from pathlib import Path
 
 from ..core.model import UnifiedProject
@@ -11,11 +12,13 @@ from ..exporters import ExporterRegistry, ExportError
 
 class ConvertPipeline:
     @staticmethod
-    def parse(input_path: Path | str) -> UnifiedProject:
+    def parse(input_path: Path | str, framerate: Fraction | None = None) -> UnifiedProject:
         path = Path(input_path)
         if not path.exists():
             raise ParseError(f"File not found: {path}")
         parser = ParserRegistry.get_parser(path)
+        if framerate is not None and hasattr(parser, "default_framerate"):
+            parser.default_framerate = framerate
         return parser.parse(path)
 
     @staticmethod
@@ -29,15 +32,17 @@ class ConvertPipeline:
         input_path: Path | str,
         output_path: Path | str | None = None,
         verbose: bool = False,
+        framerate: Fraction | None = None,
     ) -> Path:
         input_path = Path(input_path)
         if output_path is None:
             output_path = input_path.parent / f"{input_path.stem}_report.docx"
 
         if verbose:
-            print(f"Parsing: {input_path}")
+            fr_str = f" @ {float(framerate):.3f}fps" if framerate else ""
+            print(f"Parsing: {input_path}{fr_str}")
 
-        project = ConvertPipeline.parse(input_path)
+        project = ConvertPipeline.parse(input_path, framerate=framerate)
 
         if verbose:
             tc = project.clip_count()

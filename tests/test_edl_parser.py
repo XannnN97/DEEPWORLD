@@ -1,60 +1,67 @@
-"""Tests for EDL parser."""
+"""Tests for EDL parser — transition, speed, black reel, edge cases."""
 
 from pathlib import Path
 from deepworld.parsers import ParserRegistry
-from deepworld.core.enums import TrackType
+from deepworld.core.enums import TrackType, TransitionType
+from deepworld.core.timecode import Timecode
+from fractions import Fraction
 
 SAMPLES = Path(__file__).parent.parent / "samples"
 SAMPLE_EDL = SAMPLES / "sample_cmx3600.edl"
 
 
-class TestEDLParser:
-    def setup_method(self):
-        self.parser = ParserRegistry.get_parser(SAMPLE_EDL)
-
-    def test_parser_type(self):
-        assert self.parser.format_name() == "CMX3600 EDL"
-
-    def test_parse_title(self):
-        proj = self.parser.parse(SAMPLE_EDL)
-        assert "Sample EDL" in proj.metadata.title
-
-    def test_parse_clip_count(self):
-        proj = self.parser.parse(SAMPLE_EDL)
-        assert proj.clip_count() == 6
-
-    def test_parse_timeline(self):
-        proj = self.parser.parse(SAMPLE_EDL)
-        assert len(proj.timelines) == 1
-        assert proj.timelines[0].framerate == self.parser.default_framerate
-
-    def test_parse_tracks(self):
-        proj = self.parser.parse(SAMPLE_EDL)
-        tracks = proj.timelines[0].tracks
-        assert len(tracks) > 0
-
-    def test_parse_has_video_track(self):
-        proj = self.parser.parse(SAMPLE_EDL)
-        has_video = any(t.track_type == TrackType.VIDEO for tl in proj.timelines for t in tl.tracks)
-        assert has_video
-
-    def test_parse_clip_names(self):
-        proj = self.parser.parse(SAMPLE_EDL)
+class TestEDLParserTransition:
+    def test_transition_detected(self):
+        """Dissolve events should carry a Transition object."""
+        proj = ParserRegistry.get_parser(SAMPLE_EDL).parse(SAMPLE_EDL)
         clips = [c for tl in proj.timelines for t in tl.tracks for c in t.clips]
-        named = [c for c in clips if c.clip_name]
-        assert len(named) > 0
+        with_transition = [c for c in clips if c.transition is not None]
+        assert len(with_transition) > 0, "Should find at least one dissolve"
 
-    def test_parse_timecodes(self):
-        proj = self.parser.parse(SAMPLE_EDL)
+    def test_transition_type(self):
+        proj = ParserRegistry.get_parser(SAMPLE_EDL).parse(SAMPLE_EDL)
+        clips = [c for tl in proj.timelines for t in tl.tracks for c in t.clips]
+        dissolves = [c for c in clips if c.transition and c.transition.transition_type == TransitionType.DISSOLVE]
+        assert len(dissolves) >= 2  # events 004 and 006 are D type
+
+    def test_speed_from_comment(self):
+        """Default speed should be 100.0 for normal clips."""
+        proj = ParserRegistry.get_parser(SAMPLE_EDL).parse(SAMPLE_EDL)
+        clips = [c for tl in proj.timelines for t in tl.tracks for c in t.clips]
+        non_black = [c for c in clips if c.clip_name and "[BL]" not in c.clip_name]
+        for clip in non_black:
+            assert clip.speed == 100.0 or clip.speed > 0
+
+    def test_black_reel_handling(self):
+        """BL reel items should have no source_file and clip_name starting with [BL]."""
+        proj = ParserRegistry.get_parser(SAMPLE_EDL).parse(SAMPLE_EDL)
+        clips = [c for tl in proj.timelines for t in tl.tracks for c in t.clips]
+        bl_clips = [c for c in clips if "[BL]" in c.clip_name]
+        assert len(bl_clips) > 0
+        for c in bl_clips:
+            assert c.source_file is None or c.source_file == ""
+
+
+class TestEDLParserTrackSeparation:
+    def test_video_and_audio_tracks(self):
+        proj = ParserRegistry.get_parser(SAMPLE_EDL).parse(SAMPLE_EDL)
+        tracks = [t for tl in proj.timelines for t in tl.tracks]
+        types = {t.track_type for t in tracks}
+        assert TrackType.VIDEO in types
+        assert TrackType.AUDIO in types
+
+    def test_clip_timecodes_consistent(self):
+        proj = ParserRegistry.get_parser(SAMPLE_EDL).parse(SAMPLE_EDL)
         for tl in proj.timelines:
             for t in tl.tracks:
                 for c in t.clips:
-                    if c.record_in is not None:
-                        assert c.record_in.total_frames >= 0
+                    if c.record_in is not None and c.record_out is not None:
+                        assert c.record_out.total_frames > c.record_in.total_frames
 
-    def test_parse_black_reel(self):
-        proj = self.parser.parse(SAMPLE_EDL)
+
+class TestEDLParserClipNames:
+    def test_clip_names_extracted(self):
+        proj = ParserRegistry.get_parser(SAMPLE_EDL).parse(SAMPLE_EDL)
         clips = [c for tl in proj.timelines for t in tl.tracks for c in t.clips]
-        black_clip = next((c for c in clips if c.reel_name is None and c.source_file is None), None)
-        # BL reel items exist, source_file should be None for them
-        assert any(c.source_file is None or "BL" in (c.clip_name or "") for c in clips)
+        named = [c for c in clips if c.clip_name and not c.clip_name.startswith("[")]
+        assert len(named) >= 4

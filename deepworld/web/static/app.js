@@ -17,6 +17,11 @@ fileInput.addEventListener('change', (e) => {
   if (e.target.files.length) handleFile(e.target.files[0]);
 });
 
+function getFramerate() {
+  const sel = document.getElementById('framerateSelect');
+  return sel ? parseFloat(sel.value) : 24.0;
+}
+
 /* ── File Handler ── */
 async function handleFile(file) {
   currentFile = file;
@@ -26,6 +31,7 @@ async function handleFile(file) {
 
   const fd = new FormData();
   fd.append('file', file);
+  fd.append('framerate', getFramerate().toString());
 
   try {
     const r = await fetch('/api/parse', { method: 'POST', body: fd });
@@ -68,13 +74,11 @@ function renderTimelines(project) {
   content.innerHTML = '';
 
   project.timelines.forEach((tl, ti) => {
-    // Tab — use Bootstrap 5's own tab API instead of custom click handlers
     const li = document.createElement('li');
     li.className = 'nav-item';
     li.innerHTML = `<button class="nav-link ${ti === 0 ? 'active' : ''}" data-bs-toggle="tab" data-bs-target="#tl-${ti}" type="button" role="tab">${tl.name}</button>`;
     tabList.appendChild(li);
 
-    // Content pane
     const div = document.createElement('div');
     div.className = `tab-pane tl-content ${ti === 0 ? 'show active' : ''}`;
     div.id = `tl-${ti}`;
@@ -134,6 +138,7 @@ async function downloadFile(format, btn) {
   const fd = new FormData();
   fd.append('file', currentFile);
   fd.append('output_format', format);
+  fd.append('framerate', getFramerate().toString());
 
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> 导出中...';

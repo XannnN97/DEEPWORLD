@@ -90,7 +90,7 @@ class FCPXMLParser(BaseParser):
             fr = self._parse_framerate(tc_elem) if tc_elem is not None else Fraction(24000, 1001)
             duration_str = seq_elem.get("duration", "")
             drop_frame = (tc_elem.get("format", "") if tc_elem is not None else "") in (
-                "dd/mm/ss", "NDF"
+                "dd/mm/ss",
             )
 
             # Build resource library
