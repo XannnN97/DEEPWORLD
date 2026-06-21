@@ -147,6 +147,9 @@ async function downloadFile(format, btn) {
     const r = await fetch('/api/export', { method: 'POST', body: fd });
     if (!r.ok) { alert('导出失败: ' + r.statusText); btn.disabled = false; btn.innerHTML = '❌ 重试'; return; }
 
+    // Check for server-side file path header
+    const filePath = r.headers.get('X-File-Path');
+
     const blob = await r.blob();
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -154,6 +157,12 @@ async function downloadFile(format, btn) {
     a.download = currentFile.name.replace(/\.[^.]+$/, `_report.${format}`);
     a.click();
     URL.revokeObjectURL(url);
+
+    // Show user where the file was saved
+    if (filePath) {
+      const statusDiv = document.getElementById('uploadStatus');
+      statusDiv.innerHTML += `<br><span class="text-info small">📁 已保存: ${filePath}</span>`;
+    }
   } catch (err) {
     alert('网络错误: ' + err.message);
   }

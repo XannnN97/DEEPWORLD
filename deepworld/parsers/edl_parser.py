@@ -70,6 +70,7 @@ class EDLParser(BaseParser):
         metadata = ProjectMetadata(
             source_format="edl",
             source_path=str(file_path),
+            framerate=self.default_framerate,
         )
         timeline = UnifiedTimeline(framerate=self.default_framerate)
         tracks: dict[str, UnifiedTrack] = {}

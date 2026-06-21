@@ -87,14 +87,12 @@ async def export_file(
 
         project = ConvertPipeline.parse(Path(tmp_in), framerate=fr)
 
-        # Export to output dir or temp
+        # Export to output dir or temp (next to source file)
         out_name = Path(file.filename).stem + f"_report.{output_format}"
         if OUTPUT_DIR:
             out_path = str(OUTPUT_DIR / out_name)
         else:
-            tmp_out = tempfile.NamedTemporaryFile(delete=False, suffix=f".{output_format}")
-            out_path = tmp_out.name
-            tmp_out.close()
+            out_path = str(Path(tmp_in).parent / out_name)
 
         ConvertPipeline.export(project, Path(out_path))
 
@@ -109,7 +107,10 @@ async def export_file(
             out_path,
             media_type=mt,
             filename=out_name,
-            headers={"Content-Disposition": f'attachment; filename="{out_name}"'},
+            headers={
+                "Content-Disposition": f'attachment; filename="{out_name}"',
+                "X-File-Path": out_path,
+            },
         )
     finally:
         _cleanup(tmp_in)
