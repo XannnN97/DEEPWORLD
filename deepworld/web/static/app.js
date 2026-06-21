@@ -159,10 +159,15 @@ async function downloadFile(format, btn) {
     URL.revokeObjectURL(url);
 
     // Show user where the file was saved
-    if (filePath) {
-      const statusDiv = document.getElementById('uploadStatus');
-      statusDiv.innerHTML += `<br><span class="text-info small">📁 已保存: ${filePath}</span>`;
-    }
+    const statusDiv = document.getElementById('uploadStatus');
+    statusDiv.innerHTML += `<br><span class="text-success small">✅ 下载完成</span>`;
+
+    // Fetch file path from server
+    try {
+      const resp2 = await fetch('/api/output-dir');
+      const dirInfo = await resp2.json();
+      statusDiv.innerHTML += `<br><span class="text-info small">📁 文件已保存至: ${dirInfo.path}${currentFile.name.replace(/\.[^.]+$/, `_report.${format}`)}</span>`;
+    } catch(e) {}
   } catch (err) {
     alert('网络错误: ' + err.message);
   }

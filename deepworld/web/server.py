@@ -8,7 +8,7 @@ import uvicorn
 from pathlib import Path
 from fractions import Fraction
 from fastapi import FastAPI, UploadFile, File, Form
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -20,6 +20,17 @@ HERE = Path(__file__).parent
 TEMPLATES = HERE / "templates"
 STATIC = HERE / "static"
 OUTPUT_DIR: Path | None = None
+_DEFAULT_OUTPUT: Path | None = None
+
+
+def _get_output_dir() -> Path:
+    if OUTPUT_DIR:
+        return OUTPUT_DIR
+    global _DEFAULT_OUTPUT
+    if _DEFAULT_OUTPUT is None:
+        _DEFAULT_OUTPUT = Path.home() / "Desktop" / "DEEPWORLD_exports"
+        _DEFAULT_OUTPUT.mkdir(parents=True, exist_ok=True)
+    return _DEFAULT_OUTPUT
 
 app = FastAPI(title="DEEPWORLD - Film Editor Converter")
 
@@ -70,6 +81,11 @@ async def list_formats():
     }
 
 
+@app.get("/api/output-dir")
+async def get_output_dir():
+    return {"path": str(_get_output_dir()) + "/"}
+
+
 @app.post("/api/export")
 async def export_file(
     file: UploadFile = File(...),
@@ -87,12 +103,9 @@ async def export_file(
 
         project = ConvertPipeline.parse(Path(tmp_in), framerate=fr)
 
-        # Export to output dir or temp (next to source file)
+        # Export to Desktop/DEEPWORLD_exports/
         out_name = Path(file.filename).stem + f"_report.{output_format}"
-        if OUTPUT_DIR:
-            out_path = str(OUTPUT_DIR / out_name)
-        else:
-            out_path = str(Path(tmp_in).parent / out_name)
+        out_path = str(_get_output_dir() / out_name)
 
         ConvertPipeline.export(project, Path(out_path))
 
@@ -171,5 +184,7 @@ def start_server(host: str = "127.0.0.1", port: int = 8090, output_dir: str | No
         OUTPUT_DIR = Path(output_dir)
         OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
         print(f"Output directory: {OUTPUT_DIR}")
+    else:
+        print(f"Output directory: {_get_output_dir()} (use --output-dir to change)")
     print(f"DEEPWORLD web UI starting: http://{host}:{port}")
     uvicorn.run(app, host=host, port=port, log_level="info")
